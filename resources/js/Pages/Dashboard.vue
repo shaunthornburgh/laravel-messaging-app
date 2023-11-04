@@ -2,7 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, usePage } from '@inertiajs/vue3';
 import { useForm } from "@inertiajs/vue3";
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import Message from "@/Pages/Messages/Message.vue";
 import TextInput from "@/Components/TextInput.vue";
 import Dropdown from "@/Components/Dropdown.vue";
@@ -22,7 +22,18 @@ const form = useForm({
     body: '',
     to: props.to.id
 })
-const store = () => form.post(route('message.store'))
+
+onMounted(() => {
+    Echo.private(`messages.${page.props.auth.user.id}`)
+        .listen('NewMessageCreated', (event) => {
+            props.messages.push(event.message);
+        });
+});
+
+const store = () => {
+    form.post(route('message.store'))
+    form.reset('body')
+}
 </script>
 
 <template>

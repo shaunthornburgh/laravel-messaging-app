@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewMessageCreated;
 use App\Http\Requests\StoreMessageRequest;
 use App\Models\Message;
 use App\Models\User;
@@ -43,11 +44,13 @@ class MessageController extends Controller
      */
     public function store(StoreMessageRequest $request): RedirectResponse
     {
-        Message::create([
+        $message = Message::create([
             'from' => auth()->id(),
             'to' => $request->validated('to'),
             'body' => $request->validated('body')
         ]);
+
+        broadcast(new NewMessageCreated($message))->toOthers();
 
         return redirect()->back();
     }

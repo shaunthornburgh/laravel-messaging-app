@@ -20,7 +20,7 @@ class Message extends Model
     /**
      * @return HasOne
      */
-    public function fromUser(): HasOne
+    public function from(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'from');
     }
@@ -28,7 +28,7 @@ class Message extends Model
     /**
      * @return HasOne
      */
-    public function toUser(): HasOne
+    public function to(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'to');
     }
